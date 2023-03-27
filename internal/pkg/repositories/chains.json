@@ -1,0 +1,38 @@
+{
+    "42161": {
+        "rpc": "https://arb1.arbitrum.io/rpc"
+    },
+    "1313161554": {
+        "rpc": "https://arb1.arbitrum.io/rpc"
+    },    
+    "43114": {
+        "rpc": "https://api.avax.network/ext/bc/C/rpc"
+    },
+    "56": {
+        "rpc": "https://bsc-dataseed.binance.org"
+    },
+    "199": {
+        "rpc": "https://rpc.bt.io/"
+    },
+    "25": {
+        "rpc": "https://evm-cronos.crypto.org"
+    },
+    "4": {
+        "rpc": "https://rinkeby.infura.io/v3/bb2c5efc65cc4d498e91a0664f3c84ff"
+    },
+    "1" : {
+        "rpc": "https://mainnet.aurora.dev"
+    },
+    "250": {
+        "rpc": "https://rpc.ftm.tools/"
+    },
+    "42262": {
+        "rpc": "https://emerald.oasis.dev"
+    },
+    "137": {
+        "rpc": "https://rpc-mainnet.maticvigil.com"
+    },
+    "106": {
+        "rpc": "https://evmexplorer.velas.com/rpc"
+    }
+}

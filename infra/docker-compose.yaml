@@ -1,0 +1,93 @@
+version: "3.7"
+
+volumes:
+  mysql_master_data: {}
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  reward:
+    image: 'reward:0.1'
+    entrypoint: ["/bin/sh", "-c", "/app/server api -c internal/pkg/config/local.yaml"]
+    networks:
+      - app-tier
+    volumes:
+      - ../internal/pkg/config/local.yaml:/app/internal/pkg/config/local.yaml:ro
+    ports:
+      - '8081:8081'
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-tier
+    ports:
+      - '6379:6379'
+  
+  redis-slave:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis
+      - ALLOW_EMPTY_PASSWORD=yes
+    depends_on:
+      - redis
+    networks:
+      - app-tier
+  
+  redis-sentinel:
+    image: 'bitnami/redis-sentinel:latest'
+    depends_on:
+      - redis
+      - redis-slave
+    environment:
+      - REDIS_MASTER_HOST=127.0.0.1
+    ports:
+      - '26379-26381:26379'
+    networks:
+      - app-tier
+
+  mysql-master:
+    image: 'bitnami/mysql:latest'
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_master_data:/bitnami/mysql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    environment:
+      - MYSQL_REPLICATION_MODE=master
+      - MYSQL_REPLICATION_USER=repl_user
+      - MYSQL_REPLICATION_PASSWORD=repl_password
+      - MYSQL_ROOT_PASSWORD=12345678
+    networks:
+      - app-tier
+ 
+  mysql-slave:
+    image: 'bitnami/mysql:latest'
+    ports:
+      - '3306'
+    depends_on:
+      - mysql-master
+    environment:
+      - MYSQL_REPLICATION_MODE=slave
+      - MYSQL_REPLICATION_USER=repl_user
+      - MYSQL_REPLICATION_PASSWORD=repl_password
+      - MYSQL_MASTER_HOST=mysql-master
+      - MYSQL_MASTER_PORT_NUMBER=3306
+      - MYSQL_MASTER_ROOT_PASSWORD=12345678
+    networks:
+      - app-tier
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8989:8080
+    depends_on:
+      - mysql-master
+      - mysql-slave
+    networks:
+      - app-tier

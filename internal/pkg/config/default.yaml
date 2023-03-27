@@ -1,0 +1,19 @@
+http:
+  bindAddress: ":8015"
+  mode: debug #(debug,release,test)
+  prefix: /api/v1
+dbConfig:
+  Host: localhost
+  Port: 3306
+  DBName: ks-rewards
+  User: root
+  Password: 12345678
+  ConnLifeTime: 300
+  ConnTimeOut: 30
+  MaxIdleConns: 10
+  MaxOpenConns: 80
+  LogLevel: 1
+redis:
+  RedisAddresses: :6379
+  Password: 
+  MasterName:
